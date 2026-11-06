@@ -21,7 +21,7 @@ const redis = createClient({ url: process.env.REDIS_URL });
 redis.on("error", (err) => console.error("Redis Error", err));
 await redis.connect();
 
-// --- MODELS ---
+// --- MODELS (No Phone, Only Email) ---
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   emailVerified: { type: Boolean, default: false }
@@ -42,12 +42,12 @@ const transporter = nodemailer.createTransport({
 // --- AUTH MIDDLEWARE ---
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.slice(7) : null;
-  if (!token) return res.status(401).json({ message: "Please verify your email first." });
+  if (!token) return res.status(401).json({ message: "Please login first." });
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET);
     next();
   } catch {
-    res.status(401).json({ message: "Session expired." });
+    res.status(401).json({ message: "Session expired. Login again." });
   }
 };
 
