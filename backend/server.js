@@ -56,6 +56,7 @@ app.post("/api/auth/send-otp", async (req, res) => {
   const email = normalizeEmail(req.body.email);
   if (!validEmail(email)) return res.status(400).json({ message: "Invalid email." });
 
+  // 60 सेकंड का कोलडाउन
   const cooldown = await redis.set(`otp:cd:${email}`, "1", { NX: true, EX: 60 });
   if (!cooldown) return res.status(429).json({ message: "Wait 60 seconds before requesting again." });
 
@@ -76,10 +77,20 @@ app.post("/api/auth/send-otp", async (req, res) => {
   }
 });
 
+// 🛡️ यहाँ OTP Attempts की सीमा (Brute-force protection) जोड़ी गई है
 app.post("/api/auth/verify-otp", async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const otp = String(req.body.otp || "");
   if (!validEmail(email) || otp.length !== 6) return res.status(400).json({ message: "Invalid format." });
+
+  const attemptsKey = `otp:attempts:${email}`;
+  const attempts = await redis.incr(attemptsKey);
+  if (attempts === 1) await redis.expire(attemptsKey, 300); // 5 मिनट तक याद रखें
+
+  if (attempts > 5) {
+    await redis.del(`otp:code:${email}`);
+    return res.status(429).json({ message: "Too many wrong attempts. Request a new OTP." });
+  }
 
   const savedHash = await redis.get(`otp:code:${email}`);
   if (!savedHash) return res.status(400).json({ message: "OTP expired or not found." });
@@ -87,8 +98,10 @@ app.post("/api/auth/verify-otp", async (req, res) => {
   const submittedHash = otpHash(email, otp);
   if (savedHash !== submittedHash) return res.status(401).json({ message: "Incorrect OTP." });
 
+  // सफल होने पर सभी keys डिलीट करें
   await redis.del(`otp:code:${email}`);
   await redis.del(`otp:cd:${email}`);
+  await redis.del(attemptsKey);
 
   const user = await User.findOneAndUpdate({ email }, { emailVerified: true }, { new: true, upsert: true });
   const token = jwt.sign({ userId: user._id, email }, process.env.JWT_SECRET, { expiresIn: "7d" });
