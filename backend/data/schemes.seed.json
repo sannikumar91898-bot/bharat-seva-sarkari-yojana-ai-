@@ -1,0 +1,44 @@
+[
+  {
+    "schemeId": "pm-kisan",
+    "name": "PM Kisan Samman Nidhi",
+    "nameHi": "प्रधानमंत्री किसान सम्मान निधि",
+    "level": "central",
+    "state": "all",
+    "category": "farmer",
+    "purpose": "Small and marginal farmers ko direct income support",
+    "benefitAmount": "₹6000/year in 3 installments (VERIFY on pmkisan.gov.in)",
+    "eligibility": {
+      "minAge": 18, "maxAge": 120, "maxAnnualIncome": null,
+      "occupation": ["farmer"],
+      "residency": ["rural", "urban"]
+    },
+    "documents": ["Aadhaar", "Land records", "Bank passbook"],
+    "officialUrl": "https://pmkisan.gov.in",
+    "applyUrl": "https://pmkisan.gov.in/RegistrationFormUpdate.aspx",
+    "isActive": true,
+    "verifiedAt": "2025-01-01T00:00:00.000Z",
+    "verifiedBy": "admin@bharatseva.ai",
+    "sourceUrl": "https://pmkisan.gov.in"
+  },
+  {
+    "schemeId": "bihar-mukhyamantri-kanya-utthan",
+    "name": "Mukhyamantri Kanya Utthan Yojana",
+    "nameHi": "मुख्यमंत्री कन्या उत्थान योजना",
+    "level": "state",
+    "state": "BR",
+    "category": "women",
+    "purpose": "Bihar girl students ko graduation tak financial support",
+    "benefitAmount": "VERIFY on state portal",
+    "eligibility": {
+      "minAge": 0, "maxAge": 25, "gender": ["female"],
+      "state": "BR"
+    },
+    "documents": ["Aadhaar", "Bank account", "Educational certificates"],
+    "officialUrl": "https://medhasoft.bih.nic.in",
+    "isActive": true,
+    "verifiedAt": "2025-01-01T00:00:00.000Z",
+    "verifiedBy": "admin@bharatseva.ai",
+    "sourceUrl": "https://state.bihar.gov.in"
+  }
+]
