@@ -3,10 +3,7 @@ import RegisterForm from "./RegisterForm";
 import SchemeFinder from "./SchemeFinder";
 
 export default function App() {
-  // चेक करें कि यूजर पहले से लॉगिन है या नहीं (Token मौजूद है या नहीं)
-  const [verified, setVerified] = useState(
-    Boolean(localStorage.getItem("authToken"))
-  );
+  const [verified, setVerified] = useState(Boolean(localStorage.getItem("authToken")));
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -23,13 +20,10 @@ export default function App() {
           </button>
         )}
       </header>
-
       <main style={{ marginTop: "20px" }}>
         {!verified ? (
-          // अगर लॉगिन नहीं है, तो सिर्फ OTP फॉर्म दिखेगा
           <RegisterForm onVerified={() => setVerified(true)} />
         ) : (
-          // अगर OTP वेरिफाई हो गया है, तो Scheme Finder दिखेगा
           <SchemeFinder />
         )}
       </main>
